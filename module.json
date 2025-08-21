@@ -82,7 +82,7 @@
     "css/tokenbar.css"
   ],
   "url": "https://github.com/ironmonk88/monks-tokenbar",
-  "download": "https://github.com/nocotov77/monks-tokenbar/archive/12.04.zip",
+  "download": "https://github.com/nocotov77/monks-tokenbar/releases/download/v12.04.13/module.zip",
   "manifest": "https://github.com/nocotov77/monks-tokenbar/releases/latest/download/module.json",
   "bugs": "https://github.com/ironmonk88/monks-tokenbar/issues",
   "id": "monks-tokenbar",
