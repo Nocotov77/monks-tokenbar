@@ -113,6 +113,17 @@ export class MonksTokenBar {
         return str;
     }
 
+    /**
+     * @param {(Roll|Roll[]|Object)} roll 
+     */
+    static intoRoll(roll) {
+        if (roll instanceof Roll) {
+            return roll;
+        }
+
+        return Roll.fromData(roll);
+    }
+
     static init() {
         log("initializing");
         // element statics
@@ -175,7 +186,10 @@ export class MonksTokenBar {
             let menu = wrapped.call(...args);
 
             let canHeroPointReroll = ($li) => {
-                const message = game.messages.get($li[0].dataset.messageId, { strict: !0 });
+
+
+                const message = game.messages.get($li.getAttribute('data-message-id'), { strict: !0 });
+
                 if (!message.getFlag("monks-tokenbar", "what"))
                     return false;
 
@@ -192,7 +206,7 @@ export class MonksTokenBar {
                 //message.isRerollable && !!actor?.isOfType("character") && actor.heroPoints.value > 0
             };
             let canReroll = ($li) => {
-                const message = game.messages.get($li[0].dataset.messageId, { strict: !0 });
+                const message = game.messages.get($li.getAttribute('data-message-id'), { strict: !0 });
 
                 if (!MonksTokenBar.system.canReroll)
                     return false;
@@ -216,7 +230,7 @@ export class MonksTokenBar {
                     icon: '<i class="fas fa-hospital-symbol"></i>',
                     condition: canHeroPointReroll,
                     callback: $li => {
-                        const message = game.messages.get($li[0].dataset.messageId, { strict: !0 });
+                        const message = game.messages.get($li.getAttribute('data-message-id'), { strict: !0 });
                         let what = message.getFlag("monks-tokenbar", "what");
                         if (what == "savingthrow")
                             SavingThrow.rerollFromMessage(message, MonksTokenBar.contextId, { heroPoint: !0 });
@@ -229,7 +243,7 @@ export class MonksTokenBar {
                     icon: '<i class="fas fa-dice"></i>',
                     condition: canReroll,
                     callback: $li => {
-                        const message = game.messages.get($li[0].dataset.messageId, { strict: !0 });
+                        const message = game.messages.get($li.getAttribute('data-message-id'), { strict: !0 });
                         let what = message.getFlag("monks-tokenbar", "what");
                         if (what == "savingthrow")
                             SavingThrow.rerollFromMessage(message, MonksTokenBar.contextId);
@@ -242,7 +256,7 @@ export class MonksTokenBar {
                     icon: '<i class="fas fa-dice-one"></i>',
                     condition: canReroll,
                     callback: $li => {
-                        const message = game.messages.get($li[0].dataset.messageId, { strict: !0 });
+                        const message = game.messages.get($li.getAttribute('data-message-id'), { strict: !0 });
                         let what = message.getFlag("monks-tokenbar", "what");
                         if (what == "savingthrow")
                             SavingThrow.rerollFromMessage(message, MonksTokenBar.contextId, { keep: "worst" });
@@ -481,10 +495,7 @@ export class MonksTokenBar {
                     let message = game.messages.get(data.msgid);
                     const revealDice = MonksTokenBar.revealDice();
                     for (let response of data.response) {
-                        if (response.roll) {
-                            let r = Roll.fromData(response.roll);
-                            response.roll = r;
-                        }
+                        response.roll = MonksTokenBar.intoRoll(response.roll);
                     }
                     if (data.type == 'savingthrow')
                         SavingThrow.updateMessage(data.response, message, revealDice);
